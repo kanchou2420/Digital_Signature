@@ -15,9 +15,9 @@
 
 ## 📋 Tổng quan
 
-Hệ thống chữ ký số sử dụng thuật toán RSA-PSS với hash SHA-256, cho phép người dùng tạo chữ ký số cho các file và xác minh tính toàn vẹn của chúng. Được xây dựng bằng Flask và SQLite, cung cấp giao diện web thân thiện để quản lý chữ ký số.
+  Hệ thống chữ ký số sử dụng thuật toán RSA-PSS với hash SHA-256, cho phép người dùng tạo chữ ký số cho các file và xác minh tính toàn vẹn của chúng. Được xây dựng bằng Flask và SQLite, cung cấp giao diện web thân thiện để quản lý chữ ký số.
 
-<img src="./picture/image0.png">
+<img src="./picture/image0.jpg">
 
 ## ✨ Tính năng chính
 
@@ -67,12 +67,17 @@ Truy cập ứng dụng tại: `http://localhost:5000`
 ```
 digital-signature-system/
 ├── app.py                 # File chính của ứng dụng
+├── static                 # File ảnh ứng dụng
 ├── digital_signature.db   # Database SQLite (tự động tạo)
 ├── uploads/              # Thư mục lưu file upload
 ├── templates/            # Templates HTML
 │   ├── base.html
+│   ├── 400.html
+│   ├── 500.html
 │   ├── index.html
+│   ├── login.html
 │   ├── register.html
+│   ├── dashboard.html
 │   ├── keys.html
 │   ├── sign.html
 │   ├── files.html
@@ -82,105 +87,211 @@ digital-signature-system/
 
 ## 💾 Cấu trúc Database
 
-### Bảng `signers`
-| Cột | Kiểu dữ liệu | Mô tả |
-|-----|-------------|-------|
-| id | INTEGER PRIMARY KEY | ID tự tăng |
-| name | TEXT UNIQUE | Tên người ký (duy nhất) |
-| private_key | TEXT | Khóa riêng RSA (PEM format) |
-| public_key | TEXT | Khóa công khai RSA (PEM format) |
-| signature_image | TEXT | Hình ảnh chữ ký (tùy chọn) |
-| created_at | TIMESTAMP | Thời gian tạo |
+### Bảng `users` – Người dùng & khóa RSA
+| Cột             | Kiểu dữ liệu                      | Mô tả                             |
+| --------------- | --------------------------------- | --------------------------------- |
+| id              | INTEGER PRIMARY KEY AUTOINCREMENT | ID người dùng                     |
+| username        | TEXT UNIQUE                       | Tên đăng nhập                     |
+| password_hash   | TEXT                              | Mật khẩu đã băm                   |
+| full_name       | TEXT                              | Họ tên đầy đủ                     |
+| email           | TEXT                              | Email                             |
+| private_key     | TEXT                              | Private key RSA (PEM)             |
+| public_key      | TEXT                              | Public key RSA (PEM)              |
+| signature_image | TEXT                              | Hình chữ ký người dùng (tùy chọn) |
+| created_at      | TIMESTAMP                         | Thời điểm đăng ký                 |
+| updated_at      | TIMESTAMP                         | Thời điểm cập nhật                |
 
-### Bảng `signed_files`
-| Cột | Kiểu dữ liệu | Mô tả |
-|-----|-------------|-------|
-| id | INTEGER PRIMARY KEY | ID tự tăng |
-| original_filename | TEXT | Tên file gốc |
-| signed_filename | TEXT | Tên file đã ký |
-| signature_filename | TEXT | Tên file chữ ký (.sig) |
-| signer_name | TEXT | Tên người ký |
-| file_hash | TEXT | Hash SHA-256 của file (base64) |
-| signature_data | TEXT | Dữ liệu chữ ký (base64) |
-| created_at | TIMESTAMP | Thời gian ký |
+
+### Bảng `signed_files`– Lưu trữ file đã ký
+| Cột                | Kiểu dữ liệu                      | Mô tả                          |
+| ------------------ | --------------------------------- | ------------------------------ |
+| id                 | INTEGER PRIMARY KEY AUTOINCREMENT | ID bản ghi                     |
+| user_id            | INTEGER                           | Khóa ngoại liên kết bảng users |
+| original_filename  | TEXT                              | Tên file người dùng upload     |
+| signed_filename    | TEXT                              | Tên file được lưu trên server  |
+| signature_filename | TEXT                              | File chữ ký `.sig`             |
+| file_hash          | TEXT                              | Hash SHA-256 của file (base64) |
+| signature_data     | TEXT                              | Chữ ký số (base64)             |
+| created_at         | TIMESTAMP                         | Thời điểm ký file              |
+
 
 ## 🔄 Luồng hoạt động
 
-### 1. Đăng ký người ký
+### 1. Đăng ký tài khoản
 ```
-Nhập tên → Tạo cặp khóa RSA → Lưu vào database → Hiển thị khóa
-```
-
-### 2. Ký file
-```
-Chọn người ký → Upload file → Tạo hash SHA-256 → Ký bằng RSA-PSS → Lưu chữ ký
+Nhập username + mật khẩu + họ tên  
+→ Hệ thống sinh cặp RSA (private + public key)  
+→ Lưu vào bảng users  
+→ Đăng nhập để tiếp tục
 ```
 
-### 3. Xác minh chữ ký
+### 2. Đăng nhập
 ```
-Upload file → Nhập public key → Nhập chữ ký → Xác minh → Kết quả
+Nhập username/password → Kiểm tra password_hash  
+→ Lưu session (user_id, username, full_name)  
+→ Chuyển đến Dashboard
 ```
 
+### 3. Ký file
+```
+User upload file  
+→ Hệ thống tính hash SHA-256  
+→ Load private key của user  
+→ Ký bằng RSA-PSS  
+→ Lưu file + chữ ký vào uploads/  
+→ Lưu record vào signed_files
+```
+### 4. Xác minh chữ ký
+```
+Upload file  
+→ Nhập public key hoặc chọn user  
+→ Nhập chữ ký base64  
+→ Xác minh RSA-PSS  
+→ Trả về “Hợp lệ” hoặc “Không hợp lệ”
+```
+### 5. Quản lý file đã ký
+```
+Xem danh sách file  
+→ Tải xuống file gốc  
+→ Tải xuống chữ ký  
+→ Tải xuống public key
+```
 ## 📡 API Endpoints
 
-| Endpoint | Method | Mô tả |
-|----------|--------|-------|
-| `/` | GET | Trang chủ |
-| `/register` | GET/POST | Đăng ký người ký |
-| `/keys/<name>` | GET | Xem thông tin khóa |
-| `/sign` | GET/POST | Ký file |
-| `/files` | GET | Danh sách file đã ký |
-| `/verify` | GET/POST | Xác minh chữ ký |
-| `/download/<type>/<filename>` | GET | Tải file/chữ ký |
-| `/api/signer/<name>` | GET | Thông tin người ký (JSON) |
+| Endpoint                          | Method   | Yêu cầu đăng nhập | Mô tả                      |
+| --------------------------------- | -------- | ----------------- | -------------------------- |
+| `/`                               | GET      | ❌                 | Trang chủ                  |
+| `/register`                       | GET/POST | ❌                 | Đăng ký tài khoản mới      |
+| `/login`                          | GET/POST | ❌                 | Đăng nhập                  |
+| `/logout`                         | GET      | ✔️                | Đăng xuất                  |
+| `/dashboard`                      | GET      | ✔️                | Trang bảng điều khiển      |
+| `/profile`                        | GET/POST | ✔️                | Cập nhật thông tin cá nhân |
+| `/keys`                           | GET      | ✔️                | Xem private/public key     |
+| `/sign`                           | GET/POST | ✔️                | Ký file                    |
+| `/files`                          | GET      | ✔️                | Danh sách file đã ký       |
+| `/verify`                         | GET/POST | ❌                 | Xác minh chữ ký            |
+| `/download/original/<filename>`   | GET      | ✔️                | Tải file gốc               |
+| `/download/signature/<filename>`  | GET      | ✔️                | Tải file chữ ký            |
+| `/download/public_key/<username>` | GET      | ✔️                | Tải public key             |
+| `/api/signer/<username>`          | GET      | ❌                 | Lấy public key dạng JSON   |
+
 
 
 ## 🛡️ Bảo mật
 
 ### Điểm mạnh:
-- ✅ RSA-PSS với padding an toàn
-- ✅ SHA-256 hash function
-- ✅ 2048-bit key size
-- ✅ Secure filename handling
-- ✅ File size limitations
+-  RSA-PSS – padding an toàn nhất hiện nay
+-  SHA-256 – hashing mạnh
+-  2048-bit key size
+-  Mã hóa private key dạng PEM
+-  Kiểm soát session Flask
+-  Giới hạn kích thước upload 16MB
+-  secure_filename chống upload độc hại
 
 
 ## 📝 Sử dụng
-<img src="./picture/image.png">
+<img src="./picture/image1.png">
 
-### 1. Tạo người ký mới
-1. Truy cập `Đăng ký`
-2. Nhập tên người ký
-3. (Tùy chọn) Thêm hình ảnh chữ ký
-4. Nhấn "Đăng ký"
+### 1. Đăng nhập
+<img src="./picture/image1.jpg">
 
-<img src="./picture/image2.png">
+1. Truy cập trang `Đăng nhập`
+2. Nhập tài khoản / mật khẩu
+3. Nhấn **"Login"** để vào hệ thống
+---
 
-### 2. Ký file
-1. Truy cập `Ký Files`
-2. Chọn người ký từ danh sách
-3. Upload file cần ký
-4. Nhấn "Ký file"
+## 2. 🌐 Dashboard
 
-<img src="./picture/image3.png">
+<img src="./picture/image3.jpg">
 
-### 3. Xác minh chữ ký
-1. Truy cập `Xác minh chữ ký`
-2. Upload file cần kiểm tra
-3. Nhập/chọn public key
-4. Nhập chữ ký (base64)
-5. Nhấn "Xác minh"
+Tại trang Dashboard, người dùng có thể truy cập nhanh đến các chức năng chính của hệ thống ký số.
 
-<img src="./picture/image4.png">
+---
 
-### 4. Thông tin các files đã kí
-1. Truy cập `Files đã ký`
-2. Download files
-3. Download chữ kí
-4. Download khóa
-5. Xem thông tin public key
+## 3. ✍️ Ký file số
 
-<img src="./picture/image5.png">
+<img src="./picture/image4.jpg">
+
+### 2. Ký files
+
+1. Truy cập mục **"Ký files số"**
+2. Chọn người ký hoặc khóa ký đã có
+3. Tải lên file cần ký
+4. Nhấn **"Ký file"**
+5. Hệ thống tự động tạo chữ ký số cho file
+
+---
+
+## 4. 📁 Files đã ký
+
+<img src="./picture/image5.jpg">
+
+### 3. Quản lý files đã ký
+
+1. Truy cập **"Files đã ký"**
+2. Có thể:
+
+   * Tải file đã ký
+   * Tải chữ ký số
+   * Tải khóa
+   * Xem thông tin Public Key
+
+---
+
+## 5. 🔍 Xác minh chữ ký số
+
+<img src="./picture/image6.jpg">
+
+### 4. Xác minh chữ ký
+
+1. Truy cập **"Xác minh chữ ký số"**
+2. Tải lên file cần kiểm tra
+3. Tải lên hoặc nhập thủ công **Public Key**
+4. Nhập chữ ký số (Base64) hoặc
+5. Tải file chữ ký số từ máy
+6. Nhấn **"Xác minh"**
+
+---
+
+## 6. 📤 Tải file chữ ký số
+
+<img src="./picture/image7.jpg">
+
+Cho phép người dùng tải file chữ ký số lên thay vì nhập thủ công.
+
+---
+
+## 7. ℹ️ Thông tin chữ ký
+
+<img src="./picture/image8.jpg">
+
+Trang hiển thị thông tin chi tiết của chữ ký số:
+
+* Thuật toán
+* Hash
+* Dữ liệu đã ký
+* Thời gian ký
+* Người ký
+
+---
+
+## 8. 🔐 Thông tin khóa riêng tư
+
+<img src="./picture/image9.jpg">
+
+Hiển thị thông tin private key:
+
+* Tên người ký
+* Mã nhận diện
+* Dung lượng & thuật toán sinh khóa
+
+---
+
+## 9. 🔓 Hiển thị khóa riêng tư
+
+<img src="./picture/image10.jpg">
+
+Trang cho phép xem chi tiết private key (được bảo vệ và chỉ xem khi có quyền).
 
 ## 🐛 Xử lý lỗi
 

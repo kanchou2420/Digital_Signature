@@ -1,0 +1,623 @@
+{% extends "base.html" %}
+
+{% block title %}Quản lý khóa bảo mật{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 animate-fade-in">
+    <!-- Header Section -->
+    <div class="text-center mb-12">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl mb-6 animate-glow">
+            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+            </svg>
+        </div>
+        <h1 class="text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent mb-4">
+            Quản lý khóa bảo mật
+        </h1>
+        <p class="text-blue-100 text-lg max-w-2xl mx-auto">
+            Khóa mã hóa RSA 2048-bit của bạn - Nền tảng cho chữ ký số an toàn
+        </p>
+    </div>
+
+    <div class="max-w-5xl mx-auto space-y-8">
+        <!-- User Info Card -->
+        <div class="bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 animate-slide-up">
+            <div class="flex items-center space-x-4 mb-6">
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-white">{{ user[3] }}</h2>
+                    <p class="text-blue-200">@{{ user[1] }}</p>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-green-500/20 p-2 rounded-lg">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-blue-200 text-sm">Email</p>
+                            <p class="text-white font-medium">{{ user[4] if user[4] else 'Chưa cập nhật' }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-blue-500/20 p-2 rounded-lg">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-blue-200 text-sm">Ngày tạo</p>
+                            <p class="text-white font-medium">{{ user[8][:10] if user[8] else 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-purple-500/20 p-2 rounded-lg">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-blue-200 text-sm">Cập nhật</p>
+                            <p class="text-white font-medium">{{ user[9][:10] if user[9] else 'N/A' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signature Image Card -->
+        {% if user[7] %}
+        <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 animate-slide-up" style="animation-delay: 0.1s;">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-white flex items-center space-x-3">
+                    <div class="bg-gradient-to-r from-pink-500 to-rose-500 p-2 rounded-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                        </svg>
+                    </div>
+                    <span>Chữ ký vẽ tay</span>
+                </h2>
+            </div>
+            
+            <div class="bg-white rounded-xl p-6 border-2 border-dashed border-gray-300">
+                <img src="{{ user[7] }}" alt="Chữ ký của {{ user[3] }}" 
+                     class="max-w-full h-auto mx-auto" style="max-height: 200px;">
+            </div>
+            
+            <p class="text-blue-200 text-sm mt-4 text-center">
+                Chữ ký này sẽ được sử dụng trong các tài liệu đã ký
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Public Key Card -->
+        <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 animate-slide-up" style="animation-delay: 0.2s;">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-white flex items-center space-x-3">
+                    <div class="bg-gradient-to-r from-green-500 to-emerald-500 p-2 rounded-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <span>Khóa công khai (Public Key)</span>
+                </h2>
+                
+                <div class="flex space-x-2">
+                    <button onclick="copyPublicKey()" 
+                            class="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl 
+                                   hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 
+                                   transform hover:scale-105 shadow-lg flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                        <span>Sao chép</span>
+                    </button>
+                    
+                    <a href="{{ url_for('download_file', file_type='public_key', filename='public_key') }}" 
+                       class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl 
+                              hover:from-green-600 hover:to-emerald-600 transition-all duration-300 
+                              transform hover:scale-105 shadow-lg flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        <span>Tải xuống</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="bg-green-500/10 border border-green-500/30 rounded-xl p-4 mb-4">
+                <div class="flex items-start space-x-3">
+                    <svg class="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                    </svg>
+                    <div>
+                        <h3 class="text-sm font-semibold text-green-400 mb-1">Khóa công khai an toàn</h3>
+                        <p class="text-sm text-green-200">
+                            Bạn có thể chia sẻ khóa này công khai. Người khác sẽ dùng nó để xác minh chữ ký của bạn.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <textarea id="publicKey" 
+                      readonly 
+                      class="w-full h-40 p-4 bg-white/5 border border-white/30 rounded-xl text-white
+                             font-mono text-sm resize-none focus:outline-none focus:ring-2 
+                             focus:ring-green-500/50 focus:border-green-500/50 transition-all duration-300">{{ user[6] }}</textarea>
+        </div>
+
+        <!-- Private Key Card -->
+        <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 animate-slide-up" style="animation-delay: 0.3s;">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-white flex items-center space-x-3">
+                    <div class="bg-gradient-to-r from-red-500 to-pink-500 p-2 rounded-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <span>Khóa riêng tư (Private Key)</span>
+                </h2>
+                
+                <div class="flex space-x-2">
+                    <button onclick="togglePrivateKey()" 
+                            id="toggleBtn"
+                            class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-xl 
+                                   hover:from-yellow-600 hover:to-orange-600 transition-all duration-300 
+                                   transform hover:scale-105 shadow-lg flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        <span>Hiện khóa</span>
+                    </button>
+                    
+                    <button onclick="copyPrivateKey()" 
+                            class="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl 
+                                   hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 
+                                   transform hover:scale-105 shadow-lg flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                        <span>Sao chép</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-4">
+                <div class="flex items-start space-x-3">
+                    <svg class="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                    </svg>
+                    <div>
+                        <h3 class="text-sm font-semibold text-red-400 mb-1">⚠️ CẢNH BÁO BẢO MẬT</h3>
+                        <p class="text-sm text-red-200 mb-2">
+                            <strong>TUYỆT ĐỐI KHÔNG ĐƯỢC CHIA SẺ KHÓA NÀY!</strong> Bất kỳ ai có khóa riêng tư đều có thể giả mạo chữ ký của bạn.
+                        </p>
+                        <ul class="text-xs text-red-200 space-y-1 ml-4">
+                            <li>• Không gửi qua email, tin nhắn hoặc bất kỳ phương tiện nào</li>
+                            <li>• Không lưu trữ trên đám mây công cộng</li>
+                            <li>• Chỉ sử dụng để ký tài liệu trong hệ thống này</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <textarea id="privateKey" 
+                      readonly 
+                      style="display: none; filter: blur(8px);"
+                      class="w-full h-40 p-4 bg-white/5 border border-white/30 rounded-xl text-white
+                             font-mono text-sm resize-none focus:outline-none focus:ring-2 
+                             focus:ring-red-500/50 focus:border-red-500/50 transition-all duration-300">{{ user[5] }}</textarea>
+            
+            <div id="privateKeyPlaceholder" class="text-center py-12">
+                <svg class="w-16 h-16 mx-auto text-blue-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+                <p class="text-blue-200 text-lg">Nhấn "Hiện khóa" để xem khóa riêng tư</p>
+            </div>
+        </div>
+
+        <!-- Technical Info Card -->
+        <div class="bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 animate-slide-up" style="animation-delay: 0.4s;">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-500 p-3 rounded-xl">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-white">Thông tin kỹ thuật</h3>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-5">
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-blue-500/20 p-2 rounded-lg flex-shrink-0">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-semibold mb-1">Thuật toán mã hóa</h4>
+                            <p class="text-blue-200 text-sm">RSA 2048-bit</p>
+                            <p class="text-blue-300 text-xs mt-1">Bất đối xứng, độ bảo mật cao</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-5">
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-green-500/20 p-2 rounded-lg flex-shrink-0">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-semibold mb-1">Hàm băm</h4>
+                            <p class="text-blue-200 text-sm">SHA-256</p>
+                            <p class="text-blue-300 text-xs mt-1">256-bit hash, không thể đảo ngược</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-5">
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-purple-500/20 p-2 rounded-lg flex-shrink-0">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-semibold mb-1">Cơ chế Padding</h4>
+                            <p class="text-blue-200 text-sm">PSS (Probabilistic Signature Scheme)</p>
+                            <p class="text-blue-300 text-xs mt-1">Bảo vệ chống tấn công chosen-ciphertext</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-5">
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-orange-500/20 p-2 rounded-lg flex-shrink-0">
+                            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-white font-semibold mb-1">Định dạng khóa</h4>
+                            <p class="text-blue-200 text-sm">PEM (Privacy Enhanced Mail)</p>
+                            <p class="text-blue-300 text-xs mt-1">Base64-encoded, dễ chia sẻ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="grid md:grid-cols-3 gap-4 animate-slide-up" style="animation-delay: 0.5s;">
+            <a href="{{ url_for('sign_file_route') }}" 
+               class="px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl 
+                      hover:from-green-600 hover:to-emerald-600 transition-all duration-300 
+                      transform hover:scale-105 shadow-lg text-center font-semibold flex items-center justify-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                </svg>
+                <span>Ký file</span>
+            </a>
+            
+            <a href="{{ url_for('signed_files') }}" 
+               class="px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl 
+                      hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 
+                      transform hover:scale-105 shadow-lg text-center font-semibold flex items-center justify-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <span>File đã ký</span>
+            </a>
+            
+            <a href="{{ url_for('dashboard') }}" 
+               class="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl 
+                      hover:from-purple-600 hover:to-pink-600 transition-all duration-300 
+                      transform hover:scale-105 shadow-lg text-center font-semibold flex items-center justify-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                <span>Trang chủ</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+let privateKeyVisible = false;
+
+function togglePrivateKey() {
+    const privateKey = document.getElementById('privateKey');
+    const placeholder = document.getElementById('privateKeyPlaceholder');
+    const toggleBtn = document.getElementById('toggleBtn');
+    
+    if (!privateKeyVisible) {
+        // Hiện khóa với hiệu ứng
+        placeholder.style.display = 'none';
+        privateKey.style.display = 'block';
+        
+        // Dần dần bỏ blur
+        setTimeout(() => {
+            privateKey.style.filter = 'blur(0px)';
+        }, 100);
+        
+        toggleBtn.innerHTML = `
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+            </svg>
+            <span>Ẩn khóa</span>
+        `;
+        toggleBtn.className = 'px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl hover:from-red-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center space-x-2';
+        
+        privateKeyVisible = true;
+        
+        // Cảnh báo
+        showNotification('⚠️ Đang hiển thị khóa riêng tư! Hãy cẩn thận!', 'warning');
+    } else {
+        // Ẩn khóa
+        privateKey.style.filter = 'blur(8px)';
+        
+        setTimeout(() => {
+            privateKey.style.display = 'none';
+            placeholder.style.display = 'block';
+        }, 300);
+        
+        toggleBtn.innerHTML = `
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+            </svg>
+            <span>Hiện khóa</span>
+        `;
+        toggleBtn.className = 'px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-xl hover:from-yellow-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center space-x-2';
+        
+        privateKeyVisible = false;
+        showNotification('Đã ẩn khóa riêng tư', 'success');
+    }
+}
+
+function copyPublicKey() {
+    const publicKey = document.getElementById('publicKey');
+    publicKey.select();
+    
+    // Modern API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(publicKey.value).then(() => {
+            showNotification('✓ Đã sao chép khóa công khai!', 'success');
+            
+            // Visual feedback
+            publicKey.classList.add('ring-2', 'ring-green-500/50', 'border-green-500/50');
+            setTimeout(() => {
+                publicKey.classList.remove('ring-2', 'ring-green-500/50', 'border-green-500/50');
+            }, 1000);
+        }).catch(err => {
+            console.error('Lỗi sao chép:', err);
+            // Fallback
+            document.execCommand('copy');
+            showNotification('✓ Đã sao chép khóa công khai!', 'success');
+        });
+    } else {
+        // Fallback cho trình duyệt cũ
+        document.execCommand('copy');
+        showNotification('✓ Đã sao chép khóa công khai!', 'success');
+    }
+}
+
+function copyPrivateKey() {
+    if (!privateKeyVisible) {
+        showNotification('⚠️ Vui lòng hiện khóa riêng tư trước khi sao chép!', 'warning');
+        return;
+    }
+    
+    const privateKey = document.getElementById('privateKey');
+    privateKey.select();
+    
+    // Modern API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(privateKey.value).then(() => {
+            showNotification('✓ Đã sao chép khóa riêng tư! BẢO MẬT CẨN THẬN!', 'warning');
+            
+            // Visual feedback
+            privateKey.classList.add('ring-2', 'ring-red-500/50', 'border-red-500/50');
+            setTimeout(() => {
+                privateKey.classList.remove('ring-2', 'ring-red-500/50', 'border-red-500/50');
+            }, 1000);
+        }).catch(err => {
+            console.error('Lỗi sao chép:', err);
+            // Fallback
+            document.execCommand('copy');
+            showNotification('✓ Đã sao chép khóa riêng tư! BẢO MẬT CẨN THẬN!', 'warning');
+        });
+    } else {
+        // Fallback cho trình duyệt cũ
+        document.execCommand('copy');
+        showNotification('✓ Đã sao chép khóa riêng tư! BẢO MẬT CẨN THẬN!', 'warning');
+    }
+}
+
+function showNotification(message, type = 'info') {
+    // Tạo element thông báo
+    const notification = document.createElement('div');
+    
+    let bgColor, borderColor, icon;
+    switch(type) {
+        case 'success':
+            bgColor = 'bg-green-500/90';
+            borderColor = 'border-green-400/50';
+            icon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+            break;
+        case 'warning':
+            bgColor = 'bg-orange-500/90';
+            borderColor = 'border-orange-400/50';
+            icon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-1.964-1.333-2.732 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
+            break;
+        case 'error':
+            bgColor = 'bg-red-500/90';
+            borderColor = 'border-red-400/50';
+            icon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+            break;
+        default:
+            bgColor = 'bg-blue-500/90';
+            borderColor = 'border-blue-400/50';
+            icon = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+    }
+    
+    notification.className = `
+        fixed top-4 right-4 z-50 px-6 py-4 rounded-xl shadow-2xl backdrop-blur-lg border
+        transform translate-x-full transition-all duration-300 max-w-sm
+        ${bgColor} ${borderColor} text-white
+    `;
+    
+    notification.innerHTML = `
+        <div class="flex items-center space-x-3">
+            <div class="flex-shrink-0">
+                ${icon}
+            </div>
+            <div class="flex-1">
+                <p class="font-medium">${message}</p>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" class="flex-shrink-0 ml-2 hover:bg-white/10 rounded p-1 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Hiện thông báo
+    setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Tự động ẩn sau 5 giây
+    setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.remove();
+            }
+        }, 300);
+    }, 5000);
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + K để toggle private key
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        togglePrivateKey();
+    }
+    
+    // Ctrl/Cmd + Shift + C để copy public key
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'C') {
+        e.preventDefault();
+        copyPublicKey();
+    }
+});
+</script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* {
+    font-family: 'Inter', sans-serif;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes glow {
+    from {
+        box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+    }
+    to {
+        box-shadow: 0 0 30px rgba(251, 191, 36, 0.8), 0 0 40px rgba(251, 191, 36, 0.3);
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(251, 191, 36, 0.6);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(251, 191, 36, 0.8);
+}
+
+/* Smooth transitions */
+textarea {
+    transition: all 0.3s ease;
+}
+
+button {
+    transition: all 0.3s ease;
+}
+
+/* Hover effects */
+button:active {
+    transform: scale(0.95) !important;
+}
+</style>
+
+{% endblock %}

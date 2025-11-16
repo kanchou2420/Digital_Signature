@@ -71,20 +71,26 @@
             <!-- Files Grid/List -->
             <div class="space-y-4 animate-fade-in" style="animation-delay: 0.3s;">
                 {% for file in files %}
+                {# 
+                    File structure from Flask:
+                    0: id, 1: user_id, 2: original_filename, 3: signed_filename, 
+                    4: signature_filename, 5: file_hash, 6: signature_data, 
+                    7: created_at, 8: full_name, 9: public_key, 10: username 
+                #}
                 <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:bg-white/15 hover:border-white/30 transition-all duration-300 group">
                     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
                         <!-- File Info -->
-                        <div class="flex items-start space-x-4">
-                            <div class="bg-gradient-to-r from-blue-500 to-cyan-500 p-3 rounded-xl group-hover:scale-105 transition-transform duration-300">
+                        <div class="flex items-start space-x-4 flex-1">
+                            <div class="bg-gradient-to-r from-blue-500 to-cyan-500 p-3 rounded-xl group-hover:scale-105 transition-transform duration-300 flex-shrink-0">
                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <h3 class="text-xl font-semibold text-white mb-2 truncate group-hover:text-cyan-300 transition-colors duration-300">
-                                    {{ file[1] }}
+                                <h3 class="text-xl font-semibold text-white mb-2 truncate group-hover:text-cyan-300 transition-colors duration-300" title="{{ file[2] }}">
+                                    {{ file[2] }}
                                 </h3>
-                                <div class="flex flex-wrap items-center gap-3 text-sm">
+                                <div class="flex flex-wrap items-center gap-3 text-sm mb-3">
                                     <div class="flex items-center space-x-2">
                                         <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                                         <span class="text-green-300 font-medium">Đã ký</span>
@@ -93,45 +99,84 @@
                                         <svg class="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                         </svg>
-                                        <span class="text-blue-300">{{ file[4] }}</span>
+                                        <span class="text-blue-300">{{ file[8] }}</span>
                                     </div>
                                     <div class="flex items-center space-x-2">
                                         <svg class="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
-                                        <span class="text-purple-300">{{ file[8] }}</span>
+                                        <span class="text-purple-300">{{ file[7] }}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Additional Info - Collapsible -->
+                                <div class="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
+                                    <button onclick="toggleDetails({{ file[0] }})" class="flex items-center justify-between w-full text-left">
+                                        <span class="text-blue-200 text-sm font-medium">Chi tiết file</span>
+                                        <svg class="w-4 h-4 text-blue-300 transform transition-transform duration-200" id="arrow-{{ file[0] }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+                                    <div id="details-{{ file[0] }}" class="hidden mt-3 pt-3 border-t border-white/10 space-y-2 text-xs">
+                                        <div class="flex justify-between">
+                                            <span class="text-blue-200">File đã ký:</span>
+                                            <span class="text-white font-mono">{{ file[3] }}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-blue-200">File chữ ký:</span>
+                                            <span class="text-white font-mono">{{ file[4] }}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-blue-200">Hash SHA-256:</span>
+                                            <span class="text-white font-mono text-[10px] truncate max-w-[200px]" title="{{ file[5] }}">{{ file[5][:20] }}...</span>
+                                        </div>
+                                        <div class="mt-3 p-2 bg-blue-500/10 rounded-lg">
+                                            <p class="text-blue-200 mb-1 font-medium">Chữ ký số (Base64):</p>
+                                            <div class="bg-black/30 rounded p-2 max-h-20 overflow-y-auto">
+                                                <code class="text-green-300 text-[10px] break-all font-mono">{{ file[6][:100] }}...</code>
+                                            </div>
+                                            <button onclick="copySignature('{{ file[6] }}')" class="mt-2 text-blue-300 hover:text-blue-200 text-xs flex items-center space-x-1">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                                </svg>
+                                                <span>Sao chép chữ ký</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="flex flex-wrap gap-2 lg:flex-nowrap">
+                        <div class="flex flex-wrap gap-2 lg:flex-nowrap lg:ml-4">
                             <!-- Download Original File -->
-                            <a href="{{ url_for('download_file', file_type='original', filename=file[1]) }}" 
-                               class="flex items-center space-x-2 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-400/30 hover:border-blue-400/50 text-blue-300 hover:text-blue-200 px-4 py-2 rounded-xl transition-all duration-300 group/btn">
+                            <a href="{{ url_for('download_file', file_type='original', filename=file[3]) }}" 
+                               class="flex items-center space-x-2 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-400/30 hover:border-blue-400/50 text-blue-300 hover:text-blue-200 px-4 py-2 rounded-xl transition-all duration-300 group/btn"
+                               title="Tải xuống file gốc đã ký">
                                 <svg class="w-4 h-4 group-hover/btn:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
-                                <span class="font-medium">Download File</span>
+                                <span class="font-medium hidden sm:inline">File gốc</span>
                             </a>
 
                             <!-- Download Signature -->
-                            <a href="{{ url_for('download_file', file_type='signature', filename=file[3]) }}" 
-                               class="flex items-center space-x-2 bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-400/30 hover:border-yellow-400/50 text-yellow-300 hover:text-yellow-200 px-4 py-2 rounded-xl transition-all duration-300 group/btn">
+                            <a href="{{ url_for('download_file', file_type='signature', filename=file[4]) }}" 
+                               class="flex items-center space-x-2 bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-400/30 hover:border-yellow-400/50 text-yellow-300 hover:text-yellow-200 px-4 py-2 rounded-xl transition-all duration-300 group/btn"
+                               title="Tải xuống file chữ ký">
                                 <svg class="w-4 h-4 group-hover/btn:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
                                 </svg>
-                                <span class="font-medium">Download Chữ ký</span>
+                                <span class="font-medium hidden sm:inline">Chữ ký</span>
                             </a>
 
                             <!-- Download Public Key -->
-                            <a href="{{ url_for('download_file', file_type='public_key', filename=file[1]) }}" 
-                               class="flex items-center space-x-2 bg-green-500/20 hover:bg-green-500/30 border border-green-400/30 hover:border-green-400/50 text-green-300 hover:text-green-200 px-4 py-2 rounded-xl transition-all duration-300 group/btn">
+                            <a href="{{ url_for('download_file', file_type='public_key', filename=file[3]) }}" 
+                               class="flex items-center space-x-2 bg-green-500/20 hover:bg-green-500/30 border border-green-400/30 hover:border-green-400/50 text-green-300 hover:text-green-200 px-4 py-2 rounded-xl transition-all duration-300 group/btn"
+                               title="Tải xuống khóa công khai">
                                 <svg class="w-4 h-4 group-hover/btn:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
                                 </svg>
-                                <span class="font-medium">Download Khóa</span>
+                                <span class="font-medium hidden sm:inline">Khóa</span>
                             </a>
                         </div>
                     </div>
@@ -142,7 +187,7 @@
             <!-- Info Panel -->
             <div class="mt-12 bg-gradient-to-r from-blue-500/10 to-purple-500/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 animate-fade-in" style="animation-delay: 0.5s;">
                 <div class="flex items-start space-x-4">
-                    <div class="bg-blue-500/20 p-3 rounded-xl">
+                    <div class="bg-blue-500/20 p-3 rounded-xl flex-shrink-0">
                         <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
@@ -242,20 +287,20 @@
                     </div>
                 </a>
 
-                <!-- Register New Signer -->
-                <a href="{{ url_for('register') }}" 
+                <!-- Dashboard -->
+                <a href="{{ url_for('dashboard') }}" 
                    class="group bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 hover:bg-white/15 hover:border-white/30 transition-all duration-300 hover:scale-105">
                     <div class="text-center">
                         <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-4 rounded-2xl mb-6 inline-block group-hover:scale-110 transition-transform duration-300">
                             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z"></path>
                             </svg>
                         </div>
                         <h3 class="text-xl font-bold text-white mb-3 group-hover:text-purple-300 transition-colors duration-300">
-                            Đăng ký người ký
+                            Về Dashboard
                         </h3>
                         <p class="text-blue-100 group-hover:text-purple-100 transition-colors duration-300">
-                            Tạo tài khoản và cặp khóa RSA mới
+                            Xem tổng quan hoạt động của bạn
                         </p>
                     </div>
                 </a>
@@ -265,6 +310,44 @@
 </div>
 
 <script>
+// Toggle file details
+function toggleDetails(fileId) {
+    const details = document.getElementById(`details-${fileId}`);
+    const arrow = document.getElementById(`arrow-${fileId}`);
+    
+    if (details.classList.contains('hidden')) {
+        details.classList.remove('hidden');
+        arrow.style.transform = 'rotate(180deg)';
+    } else {
+        details.classList.add('hidden');
+        arrow.style.transform = 'rotate(0deg)';
+    }
+}
+
+// Copy signature to clipboard
+function copySignature(signature) {
+    navigator.clipboard.writeText(signature).then(function() {
+        // Show success notification
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-slide-up';
+        notification.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>Đã sao chép chữ ký!</span>
+            </div>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }).catch(function(err) {
+        alert('Không thể sao chép chữ ký: ' + err);
+    });
+}
+
 // Add smooth animations when page loads
 document.addEventListener('DOMContentLoaded', function() {
     // Stagger animation for file cards
@@ -282,20 +365,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         button.addEventListener('mouseleave', function() {
             this.classList.remove('animate-glow');
-        });
-    });
-
-    // Confirm download with custom modal
-    downloadButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            const fileName = this.href.split('/').pop();
-            const fileType = this.href.includes('signature') ? 'chữ ký' : 
-                           this.href.includes('public_key') ? 'khóa công khai' : 'file gốc';
-            
-            // Simple confirmation - you can replace with custom modal
-            if (!confirm(`Tải xuống ${fileType}?`)) {
-                e.preventDefault();
-            }
         });
     });
 });
@@ -319,5 +388,170 @@ const observer = new IntersectionObserver(function(entries) {
 document.querySelectorAll('.group').forEach(el => {
     observer.observe(el);
 });
+
+// Format file size
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
+
+// Add confirmation for downloads
+document.querySelectorAll('[href*="download_file"]').forEach(button => {
+    button.addEventListener('click', function(e) {
+        const fileName = this.getAttribute('title') || 'file';
+        
+        // Optional: Add download tracking or analytics here
+        console.log('Downloading:', fileName);
+    });
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl/Cmd + K: Ký file mới
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        window.location.href = "{{ url_for('sign_file_route') }}";
+    }
+    
+    // Ctrl/Cmd + V: Xác minh
+    if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+        e.preventDefault();
+        window.location.href = "{{ url_for('verify') }}";
+    }
+    
+    // Ctrl/Cmd + D: Dashboard
+    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+        e.preventDefault();
+        window.location.href = "{{ url_for('dashboard') }}";
+    }
+});
+
+// Show keyboard shortcuts hint
+{% if files %}
+setTimeout(() => {
+    const hint = document.createElement('div');
+    hint.className = 'fixed bottom-4 right-4 bg-white/10 backdrop-blur-lg border border-white/20 text-white px-4 py-2 rounded-xl text-xs z-40 animate-fade-in';
+    hint.innerHTML = `
+        <div class="flex items-center space-x-2">
+            <svg class="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-blue-200">Phím tắt: <kbd class="bg-white/20 px-1.5 py-0.5 rounded">Ctrl+K</kbd> Ký file, <kbd class="bg-white/20 px-1.5 py-0.5 rounded">Ctrl+V</kbd> Xác minh</span>
+        </div>
+    `;
+    document.body.appendChild(hint);
+    
+    // Auto hide after 5 seconds
+    setTimeout(() => {
+        hint.style.opacity = '0';
+        hint.style.transition = 'opacity 0.5s';
+        setTimeout(() => hint.remove(), 500);
+    }, 5000);
+}, 2000);
+{% endif %}
 </script>
+
+<style>
+/* Custom scrollbar for signature display */
+.overflow-y-auto::-webkit-scrollbar {
+    width: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.5);
+    border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.7);
+}
+
+/* Pulse animation for status indicator */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Smooth transitions */
+* {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+/* Hover effect for cards */
+.group:hover {
+    box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.1), 0 10px 10px -5px rgba(59, 130, 246, 0.04);
+}
+
+/* Glow animation */
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
+    }
+}
+
+.animate-glow {
+    animation: glow 2s ease-in-out infinite;
+}
+
+/* Slide up animation */
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-slide-up {
+    animation: slide-up 0.5s ease-out forwards;
+}
+
+/* Fade in animation */
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.5s ease-out forwards;
+}
+
+/* Float animation for icon */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+</style>
 {% endblock %}

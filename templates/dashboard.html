@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 animate-fade-in">
+    <!-- Welcome Header -->
+    <div class="mb-8 animate-slide-up">
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">
+            Chào mừng trở lại, 
+            <span class="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                {{ session.full_name }}
+            </span>! 👋
+        </h1>
+        <p class="text-blue-100 text-lg">Quản lý chữ ký số và tài liệu của bạn</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid md:grid-cols-3 gap-6 mb-8">
+        <!-- Total Files Card -->
+        <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:bg-white/15 hover:scale-105 transition-all duration-300 shadow-2xl animate-slide-up" style="animation-delay: 0.1s;">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-100 text-sm font-medium mb-1 flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Tổng số file đã ký
+                    </p>
+                    <h3 class="text-5xl font-bold text-white">{{ total_files }}</h3>
+                    <p class="text-blue-300 text-xs mt-1">file tài liệu</p>
+                </div>
+                <div class="bg-gradient-to-br from-blue-500 to-cyan-500 p-4 rounded-xl shadow-lg">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Info Card -->
+        <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:bg-white/15 hover:scale-105 transition-all duration-300 shadow-2xl animate-slide-up" style="animation-delay: 0.2s;">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-100 text-sm font-medium mb-1 flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        Tài khoản
+                    </p>
+                    <h3 class="text-2xl font-bold text-white truncate">@{{ session.username }}</h3>
+                    <p class="text-blue-300 text-xs mt-1">{{ user[3] }}</p>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500 to-pink-500 p-4 rounded-xl shadow-lg">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Card -->
+        <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:bg-white/15 hover:scale-105 transition-all duration-300 shadow-2xl animate-slide-up" style="animation-delay: 0.3s;">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-100 text-sm font-medium mb-1 flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                        Bảo mật
+                    </p>
+                    <h3 class="text-2xl font-bold text-white">RSA 2048</h3>
+                    <p class="text-green-300 text-xs mt-1 flex items-center">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></span>
+                        Đang hoạt động
+                    </p>
+                </div>
+                <div class="bg-gradient-to-br from-green-500 to-emerald-500 p-4 rounded-xl shadow-lg">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold text-white mb-4 flex items-center">
+            <svg class="w-6 h-6 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            Thao tác nhanh
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- Sign File Action -->
+            <a href="{{ url_for('sign_file_route') }}" class="group bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-6 hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 animate-slide-up" style="animation-delay: 0.1s;">
+                <div class="text-center">
+                    <div class="bg-white/20 rounded-full p-4 inline-flex mb-3 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-1">Ký file</h3>
+                    <p class="text-blue-100 text-sm">Ký tài liệu mới</p>
+                </div>
+            </a>
+
+            <!-- View Files Action -->
+            <a href="{{ url_for('signed_files') }}" class="group bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-6 hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 animate-slide-up" style="animation-delay: 0.2s;">
+                <div class="text-center">
+                    <div class="bg-white/20 rounded-full p-4 inline-flex mb-3 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-1">File đã ký</h3>
+                    <p class="text-blue-100 text-sm">Xem danh sách</p>
+                </div>
+            </a>
+
+            <!-- Verify Action -->
+            <a href="{{ url_for('verify') }}" class="group bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl p-6 hover:from-green-600 hover:to-emerald-600 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 animate-slide-up" style="animation-delay: 0.3s;">
+                <div class="text-center">
+                    <div class="bg-white/20 rounded-full p-4 inline-flex mb-3 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-1">Xác minh</h3>
+                    <p class="text-blue-100 text-sm">Kiểm tra chữ ký</p>
+                </div>
+            </a>
+
+            <!-- Profile Action -->
+            <a href="{{ url_for('profile') }}" class="group bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl p-6 hover:from-yellow-600 hover:to-orange-600 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 animate-slide-up" style="animation-delay: 0.4s;">
+                <div class="text-center">
+                    <div class="bg-white/20 rounded-full p-4 inline-flex mb-3 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-1">Hồ sơ</h3>
+                    <p class="text-blue-100 text-sm">Cài đặt tài khoản</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Files Section -->
+    <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 shadow-2xl animate-slide-up" style="animation-delay: 0.5s;">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-white flex items-center">
+                <svg class="w-6 h-6 mr-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                File đã ký gần đây
+            </h2>
+            <a href="{{ url_for('signed_files') }}" class="text-cyan-400 hover:text-cyan-300 transition-colors inline-flex items-center space-x-2 group">
+                <span>Xem tất cả</span>
+                <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
+            </a>
+        </div>
+
+        {% if recent_files %}
+        <div class="space-y-4">
+            {% for file in recent_files %}
+            <div class="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 hover:border-white/20 transition-all duration-300 group">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4 flex-1 min-w-0">
+                        <div class="bg-gradient-to-br from-blue-500/20 to-purple-500/20 p-3 rounded-lg border border-blue-400/30">
+                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-white font-semibold truncate group-hover:text-blue-300 transition-colors">{{ file[2] }}</h3>
+                            <div class="flex items-center space-x-4 mt-1">
+                                <p class="text-blue-100 text-sm flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    {{ file[7] }}
+                                </p>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-300 border border-green-400/30">
+                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Đã ký
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2 ml-4">
+                        <a href="{{ url_for('download_file', file_type='original', filename=file[3]) }}" 
+                           class="px-4 py-2 bg-blue-500/20 text-blue-300 rounded-lg hover:bg-blue-500/30 transition-all duration-300 text-sm font-medium border border-blue-400/30 hover:border-blue-400/50 flex items-center space-x-2"
+                           title="Tải file gốc">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            <span>Tải file</span>
+                        </a>
+                        <a href="{{ url_for('download_file', file_type='signature', filename=file[4]) }}" 
+                           class="px-4 py-2 bg-purple-500/20 text-purple-300 rounded-lg hover:bg-purple-500/30 transition-all duration-300 text-sm font-medium border border-purple-400/30 hover:border-purple-400/50 flex items-center space-x-2"
+                           title="Tải chữ ký">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                            </svg>
+                            <span>Chữ ký</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="text-center py-16">
+            <div class="bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full p-6 inline-flex mb-6 border border-white/10">
+                <svg class="w-16 h-16 text-blue-300 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Chưa có file nào được ký</h3>
+            <p class="text-blue-100 mb-6">Bắt đầu bằng cách ký file đầu tiên của bạn</p>
+            <a href="{{ url_for('sign_file_route') }}" class="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                </svg>
+                <span class="font-semibold">Ký file đầu tiên</span>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Info Cards -->
+    <div class="grid md:grid-cols-2 gap-6 mt-8">
+        <!-- Security Info -->
+        <div class="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-lg border border-blue-400/30 rounded-2xl p-6 animate-slide-up" style="animation-delay: 0.6s;">
+            <div class="flex items-start space-x-4">
+                <div class="bg-gradient-to-br from-blue-500 to-cyan-500 p-3 rounded-xl flex-shrink-0">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-2">Bảo mật tối đa</h3>
+                    <p class="text-blue-100 text-sm leading-relaxed">
+                        Tài khoản của bạn được bảo vệ bởi mã hóa RSA 2048-bit và thuật toán băm SHA-256, 
+                        đảm bảo tính bảo mật và toàn vẹn cho mọi tài liệu.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Tip -->
+        <div class="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-lg border border-purple-400/30 rounded-2xl p-6 animate-slide-up" style="animation-delay: 0.7s;">
+            <div class="flex items-start space-x-4">
+                <div class="bg-gradient-to-br from-purple-500 to-pink-500 p-3 rounded-xl flex-shrink-0">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-2">Mẹo hữu ích</h3>
+                    <p class="text-blue-100 text-sm leading-relaxed">
+                        Bạn có thể cập nhật chữ ký viết tay của mình bất cứ lúc nào trong phần 
+                        <a href="{{ url_for('profile') }}" class="text-pink-300 hover:text-pink-200 underline">Hồ sơ cá nhân</a>. 
+                        Chữ ký này chỉ mang tính minh họa!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

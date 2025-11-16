@@ -69,8 +69,8 @@
                                        focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500/50
                                        transition-all duration-300">
                             <option value="" class="bg-gray-800">-- Chọn người ký --</option>
-                            {% for signer in signers %}
-                            <option value="{{ signer[0] }}" class="bg-gray-800">{{ signer[0] }}</option>
+                            {% for user in users %}
+                            <option value="{{ user[0] }}" class="bg-gray-800">{{ user[1] }} ({{ user[0] }})</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -333,7 +333,7 @@ async function loadSignerInfo() {
         const response = await fetch(`/api/signer/${encodeURIComponent(signerName)}`);
         const data = await response.json();
         
-        if (data.public_key) {
+        if (data.success && data.public_key) {
             publicKeyTextarea.value = data.public_key;
             // Add visual feedback
             publicKeyTextarea.classList.add('ring-2', 'ring-green-500/50', 'border-green-500/50');
@@ -362,8 +362,8 @@ function toggleManualInput() {
         publicKeyTextarea.value = '';
         publicKeyTextarea.placeholder = 'Nhập hoặc chọn public key từ danh sách người ký';
         toggleBtn.innerHTML = `
-            <div class="flex items-center justify-center space
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center justify-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                 </svg>
                 <span>Nhập thủ công</span>
@@ -469,32 +469,12 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
-// Xử lý form submit
+// Xử lý form submit với loading state
 document.getElementById('verifyForm').addEventListener('submit', function(e) {
     const submitBtn = e.target.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
     
-    // Hiển thị loading
-    submitBtn.innerHTML = `
-        <div class="flex items-center justify-center space-x-3">
-            <svg class="animate-spin w-6 h-6" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <span>Đang xác minh...</span>
-        </div>
-    `;
-    submitBtn.disabled = true;
-    
-    // Khôi phục sau 3 giây (form sẽ submit trong thời gian này)
-    setTimeout(() => {
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-    }, 3000);
-});
-
-// Validate form trước khi submit
-document.getElementById('verifyForm').addEventListener('submit', function(e) {
+    // Validate trước
     const file = document.getElementById('file').files[0];
     const publicKey = document.getElementById('public_key').value.trim();
     const signature = document.getElementById('signature').value.trim();
@@ -532,6 +512,24 @@ document.getElementById('verifyForm').addEventListener('submit', function(e) {
         showNotification('Chữ ký không đúng định dạng Base64!', 'error');
         return;
     }
+    
+    // Hiển thị loading
+    submitBtn.innerHTML = `
+        <div class="flex items-center justify-center space-x-3">
+            <svg class="animate-spin w-6 h-6" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Đang xác minh...</span>
+        </div>
+    `;
+    submitBtn.disabled = true;
+    
+    // Khôi phục sau khi form submit (trường hợp có lỗi)
+    setTimeout(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }, 3000);
 });
 
 // Auto-resize textarea

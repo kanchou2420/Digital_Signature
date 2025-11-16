@@ -1,0 +1,418 @@
+{% extends "base.html" %}
+
+{% block title %}Hồ sơ cá nhân{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-12 animate-fade-in">
+    <!-- Header -->
+    <div class="text-center mb-12">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl mb-6 shadow-2xl">
+            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-4">
+            Hồ sơ cá nhân
+        </h1>
+        <p class="text-blue-100 text-lg">
+            Quản lý thông tin tài khoản và chữ ký của bạn
+        </p>
+    </div>
+
+    <div class="max-w-4xl mx-auto">
+        <form method="POST" class="space-y-8">
+            <!-- Personal Information Card -->
+            <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 shadow-2xl animate-slide-up">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="bg-gradient-to-r from-blue-500 to-cyan-500 p-3 rounded-xl">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">Thông tin cá nhân</h2>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Username (Read-only) -->
+                    <div class="relative group">
+                        <label class="block text-sm font-semibold text-blue-100 mb-3">
+                            Tên đăng nhập
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                            </div>
+                            <input type="text" 
+                                   value="{{ user[1] }}"
+                                   disabled
+                                   class="w-full pl-12 pr-32 py-4 bg-white/5 border border-white/10 rounded-xl text-gray-400 cursor-not-allowed">
+                            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-blue-300 bg-blue-500/20 px-3 py-1 rounded-full">Không thể thay đổi</span>
+                        </div>
+                    </div>
+
+                    <!-- Full Name -->
+                    <div class="relative group">
+                        <label for="full_name" class="block text-sm font-semibold text-blue-100 mb-3">
+                            Họ và tên *
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-blue-300 group-focus-within:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                            </div>
+                            <input type="text" 
+                                   id="full_name" 
+                                   name="full_name" 
+                                   value="{{ user[3] }}"
+                                   required
+                                   class="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:bg-white/20 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/50 focus:outline-none transition-all duration-300">
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="relative group">
+                        <label for="email" class="block text-sm font-semibold text-blue-100 mb-3">
+                            Email
+                            <span class="text-xs text-yellow-300 ml-2">(Tùy chọn)</span>
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-blue-300 group-focus-within:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <input type="email" 
+                                   id="email" 
+                                   name="email" 
+                                   value="{{ user[4] or '' }}"
+                                   class="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:bg-white/20 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/50 focus:outline-none transition-all duration-300"
+                                   placeholder="email@example.com">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signature Card -->
+            <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 shadow-2xl animate-slide-up" style="animation-delay: 0.1s;">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-3 rounded-xl">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">Chữ ký cá nhân</h2>
+                </div>
+
+                <!-- Current Signature Display -->
+                {% if user[7] %}
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-blue-100 mb-3">
+                        Chữ ký hiện tại
+                    </label>
+                    <div class="bg-white/5 border border-white/10 rounded-xl p-4">
+                        <img src="{{ user[7] }}" alt="Current Signature" class="max-w-full h-auto rounded-lg bg-white/90">
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Canvas Container -->
+                <div class="relative group">
+                    <label class="block text-sm font-semibold text-blue-100 mb-3">
+                        {% if user[7] %}
+                        Vẽ chữ ký mới (để cập nhật)
+                        {% else %}
+                        Vẽ chữ ký của bạn
+                        {% endif %}
+                    </label>
+                    <div class="bg-white/5 backdrop-blur-sm border border-white/20 rounded-2xl p-6 group-hover:bg-white/10 transition-all duration-300">
+                        <canvas id="signatureCanvas" 
+                                width="700" 
+                                height="250" 
+                                class="w-full h-auto bg-white/90 rounded-xl border-2 border-dashed border-gray-300 cursor-crosshair hover:border-blue-400 transition-colors duration-300 shadow-inner">
+                        </canvas>
+
+                        <!-- Canvas Controls -->
+                        <div class="flex flex-wrap items-center justify-between mt-6 gap-4">
+                            <div class="flex space-x-3">
+                                <button type="button" 
+                                        id="clearSignature"
+                                        class="group/btn px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl hover:from-red-600 hover:to-pink-600 transition-all duration-300 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                    <span class="flex items-center space-x-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                        <span>Xóa</span>
+                                    </span>
+                                </button>
+
+                                <button type="button" 
+                                        id="undoSignature"
+                                        class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-300 font-medium">
+                                    <span class="flex items-center space-x-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
+                                        </svg>
+                                        <span>Hoàn tác</span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div class="flex items-center space-x-4">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-blue-100 text-sm font-medium">Độ dày:</span>
+                                    <input type="range" id="lineWidth" min="1" max="5" value="2" 
+                                           class="w-20 h-2 bg-white/20 rounded-lg appearance-none cursor-pointer">
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-blue-100 text-sm font-medium">Màu:</span>
+                                    <div class="flex space-x-1">
+                                        <button type="button" class="color-btn w-6 h-6 bg-black rounded-full border-2 border-white/50 hover:border-white transition-colors" data-color="#000000"></button>
+                                        <button type="button" class="color-btn w-6 h-6 bg-blue-600 rounded-full border-2 border-white/30 hover:border-white transition-colors" data-color="#2563eb"></button>
+                                        <button type="button" class="color-btn w-6 h-6 bg-green-600 rounded-full border-2 border-white/30 hover:border-white transition-colors" data-color="#16a34a"></button>
+                                        <button type="button" class="color-btn w-6 h-6 bg-red-600 rounded-full border-2 border-white/30 hover:border-white transition-colors" data-color="#dc2626"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Instructions -->
+                        <div class="mt-6 p-4 bg-blue-500/10 backdrop-blur-sm border border-blue-400/30 rounded-xl">
+                            <div class="flex items-start space-x-3">
+                                <div class="bg-blue-500 rounded-full p-1 mt-0.5">
+                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-blue-300 font-semibold mb-2">💡 Hướng dẫn:</h4>
+                                    <ul class="text-blue-100 text-sm space-y-1">
+                                        <li>• Sử dụng chuột hoặc chạm màn hình để vẽ chữ ký</li>
+                                        <li>• Chữ ký này chỉ mang tính minh họa, không ảnh hưởng đến chữ ký số</li>
+                                        <li>• Có thể để trống nếu không muốn thay đổi</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="signature_image" name="signature_image" value="{{ user[7] or '' }}">
+                </div>
+            </div>
+
+            <!-- Change Password Card -->
+            <div class="bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 shadow-2xl animate-slide-up" style="animation-delay: 0.2s;">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="bg-gradient-to-r from-yellow-500 to-orange-500 p-3 rounded-xl">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white">Đổi mật khẩu</h2>
+                    <span class="bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-sm font-medium">Tùy chọn</span>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-blue-500/10 backdrop-blur-sm border border-blue-400/30 rounded-xl p-4">
+                        <p class="text-blue-100 text-sm flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Để trống nếu không muốn thay đổi mật khẩu
+                        </p>
+                    </div>
+
+                    <div class="relative group">
+                        <label for="new_password" class="block text-sm font-semibold text-blue-100 mb-3">
+                            Mật khẩu mới
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="w-5 h-5 text-blue-300 group-focus-within:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                </svg>
+                            </div>
+                            <input type="password" 
+                                   id="new_password" 
+                                   name="new_password" 
+                                   minlength="6"
+                                   class="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:bg-white/20 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/50 focus:outline-none transition-all duration-300"
+                                   placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6 animate-slide-up" style="animation-delay: 0.3s;">
+                <button type="submit" 
+                        class="group px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-300 font-semibold text-lg shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
+                    <span class="flex items-center justify-center space-x-3">
+                        <svg class="w-5 h-5 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Lưu thay đổi</span>
+                    </span>
+                </button>
+                
+                <a href="{{ url_for('dashboard') }}" 
+                   class="group px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-xl hover:bg-white/20 hover:border-white/30 transition-all duration-300 font-semibold text-lg text-center">
+                    <span class="flex items-center justify-center space-x-3">
+                        <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        <span>Hủy</span>
+                    </span>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    const signatureInput = document.getElementById('signature_image');
+    const clearBtn = document.getElementById('clearSignature');
+    const undoBtn = document.getElementById('undoSignature');
+    const lineWidthSlider = document.getElementById('lineWidth');
+    const colorBtns = document.querySelectorAll('.color-btn');
+    
+    let isDrawing = false;
+    let paths = [];
+    let currentPath = [];
+    let currentColor = '#000000';
+    let currentLineWidth = 2;
+
+    // Set canvas size for high DPI displays
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.imageSmoothingEnabled = true;
+
+    // Event listeners
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseout', stopDrawing);
+    canvas.addEventListener('touchstart', handleTouch);
+    canvas.addEventListener('touchmove', handleTouch);
+    canvas.addEventListener('touchend', stopDrawing);
+
+    colorBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            colorBtns.forEach(b => b.classList.remove('ring-2', 'ring-white', 'ring-offset-2'));
+            this.classList.add('ring-2', 'ring-white', 'ring-offset-2');
+            currentColor = this.dataset.color;
+        });
+    });
+
+    lineWidthSlider.addEventListener('input', function() {
+        currentLineWidth = parseInt(this.value);
+    });
+
+    function getCanvasPoint(e) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: (e.clientX - rect.left) * (canvas.width / rect.width) / dpr,
+            y: (e.clientY - rect.top) * (canvas.height / rect.height) / dpr
+        };
+    }
+
+    function startDrawing(e) {
+        isDrawing = true;
+        const point = getCanvasPoint(e);
+        currentPath = [{ x: point.x, y: point.y, color: currentColor, lineWidth: currentLineWidth }];
+        ctx.beginPath();
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = currentLineWidth;
+        ctx.moveTo(point.x, point.y);
+    }
+
+    function draw(e) {
+        if (!isDrawing) return;
+        const point = getCanvasPoint(e);
+        currentPath.push({ x: point.x, y: point.y, color: currentColor, lineWidth: currentLineWidth });
+        ctx.lineTo(point.x, point.y);
+        ctx.stroke();
+    }
+
+    function stopDrawing() {
+        if (isDrawing && currentPath.length > 0) {
+            paths.push([...currentPath]);
+            saveSignature();
+        }
+        isDrawing = false;
+    }
+
+    function handleTouch(e) {
+        e.preventDefault();
+        const touch = e.touches[0];
+        if (!touch) return;
+        const mouseEvent = new MouseEvent(
+            e.type === 'touchstart' ? 'mousedown' : 'mousemove',
+            { clientX: touch.clientX, clientY: touch.clientY }
+        );
+        canvas.dispatchEvent(mouseEvent);
+    }
+
+    function saveSignature() {
+        signatureInput.value = canvas.toDataURL('image/png', 0.8);
+    }
+
+    function redrawCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        paths.forEach(path => {
+            if (path.length > 0) {
+                ctx.beginPath();
+                ctx.strokeStyle = path[0].color;
+                ctx.lineWidth = path[0].lineWidth;
+                ctx.moveTo(path[0].x, path[0].y);
+                for (let i = 1; i < path.length; i++) {
+                    ctx.lineTo(path[i].x, path[i].y);
+                }
+                ctx.stroke();
+            }
+        });
+    }
+
+    clearBtn.addEventListener('click', function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        signatureInput.value = '';
+        paths = [];
+        
+        // Animation effect
+        this.classList.add('animate-pulse');
+        setTimeout(() => this.classList.remove('animate-pulse'), 200);
+    });
+
+    undoBtn.addEventListener('click', function() {
+        if (paths.length > 0) {
+            paths.pop();
+            redrawCanvas();
+            if (paths.length > 0) {
+                saveSignature();
+            } else {
+                signatureInput.value = '';
+            }
+            
+            // Animation effect
+            this.classList.add('animate-pulse');
+            setTimeout(() => this.classList.remove('animate-pulse'), 200);
+        }
+    });
+
+    // Set default color as active
+    colorBtns[0].classList.add('ring-2', 'ring-white', 'ring-offset-2');
+});
+</script>
+{% endblock %}
