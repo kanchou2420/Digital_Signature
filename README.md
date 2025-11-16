@@ -305,11 +305,11 @@ Trang cho phép xem chi tiết private key (được bảo vệ và chỉ xem kh
 ## Test xác minh chữ ký 
 1. Chọn **xác minh chữ ký**
 2. Chọn tệp : [upload/text.txt]
-3. Chọn người ký: [Kanchou]
+3. Chọn người ký: [Đỗ Hải Anh]
 4. Chọn tệp file chữ ký đã tải sẵn: [uploads/text.txt.sig]
 5. Bấm xác minh chữ ký 
 
-<img src="./picture/image6.png">
+<img src="./picture/image11.jpg">
 
 ## 👥 Tác giả
 
