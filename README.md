@@ -41,17 +41,48 @@
 
 ### Yêu cầu hệ thống
 ```
-Python 3.7+
+Python 3.10
 Flask
 SQLite3
 Cryptography library
 ```
 
-### Cài đặt dependencies
+### Cài đặt requirements
 ```bash
-pip install flask
-pip install cryptography
-pip install werkzeug
+attrs==25.4.0
+blinker==1.9.0
+certifi==2025.11.12
+cffi==2.0.0
+charset-normalizer==3.4.4
+click==8.3.1
+colorama==0.4.6
+cryptography==46.0.3
+exceptiongroup==1.3.0
+Flask==3.1.2
+gunicorn==23.0.0
+h11==0.16.0
+idna==3.11
+itsdangerous==2.2.0
+Jinja2==3.1.6
+MarkupSafe==3.0.3
+outcome==1.3.0.post0
+packaging==25.0
+pycparser==2.23
+pyOpenSSL==25.3.0
+PySocks==1.7.1
+python-dotenv==1.2.1
+requests==2.32.5
+selenium==4.38.0
+sniffio==1.3.1
+sortedcontainers==2.4.0
+trio==0.32.0
+trio-websocket==0.12.2
+typing_extensions==4.15.0
+urllib3==2.5.0
+webdriver-manager==4.0.2
+websocket-client==1.9.0
+Werkzeug==3.1.3
+wsproto==1.3.1
 ```
 
 ## 🚀 Chạy ứng dụng
